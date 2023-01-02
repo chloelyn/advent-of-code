@@ -14,7 +14,15 @@ pub fn solve(input: &str) -> (usize, String) {
     let mut cpu = CPU::new();
     let instructions = input.lines().map(Instruction::from_str);
     cpu.process(instructions);
-    (cpu.signal_strength as usize, cpu.readout())
+    let converted = common::ocr::convert(&cpu.readout());
+    (
+        cpu.signal_strength as usize,
+        if converted == "" {
+            cpu.readout()
+        } else {
+            converted
+        },
+    )
 }
 
 enum Instruction {
@@ -115,15 +123,5 @@ common::test!(
 #######.......#######.......#######....."
         )
     ),
-    (
-        13180,
-        String::from(
-            "####.####.####..##..#..#...##..##..###..
-#.......#.#....#..#.#..#....#.#..#.#..#.
-###....#..###..#....####....#.#..#.###..
-#.....#...#....#....#..#....#.####.#..#.
-#....#....#....#..#.#..#.#..#.#..#.#..#.
-####.####.#.....##..#..#..##..#..#.###.."
-        )
-    )
+    (13180, String::from("EZFCHJAB"))
 );
