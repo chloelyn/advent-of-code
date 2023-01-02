@@ -3,6 +3,8 @@ use pyo3::{
     Py, PyAny, PyResult, Python,
 };
 
+const CODE: &str = include_str!("solve.py");
+
 pub fn input() -> &'static str {
     include_str!("../../../input/day07.txt")
 }
@@ -12,22 +14,17 @@ pub fn test_input() -> &'static str {
 }
 
 pub fn solve(input: &str) -> (usize, usize) {
-    let (mut part_one, mut part_two) = (0, 0);
-    let code = include_str!("solve.py");
-    Python::with_gil(|py| -> PyResult<()> {
-        let fun: Py<PyAny> = PyModule::from_code(py, code, "", "")?
+    Python::with_gil(|py| -> PyResult<(usize, usize)> {
+        let fun: Py<PyAny> = PyModule::from_code(py, CODE, "", "")?
             .getattr("solve")?
             .into();
-        let args: (&str,) = (input,);
+        let args = (input,);
         let res = fun.call1(py, args)?;
         let solution: &PyTuple = res.as_ref(py).downcast()?;
-        part_one = item(&solution, 0);
-        part_two = item(&solution, 1);
 
-        Ok(())
+        Ok((item(&solution, 0), item(&solution, 1)))
     })
-    .unwrap();
-    (part_one, part_two)
+    .unwrap()
 }
 
 fn item(tuple: &PyTuple, index: usize) -> usize {
