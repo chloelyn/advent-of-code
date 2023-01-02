@@ -39,9 +39,7 @@ pub fn convert_letter(input: &str, idx: usize) -> Option<char> {
 }
 
 pub fn convert(input: &str) -> String {
-    let width = input.lines().next().unwrap().len();
-    let length = width / 4 - 2;
-    (0..length)
+    (0..)
         .take_while(|&idx| convert_letter(input, idx).is_some())
         .map(|idx| convert_letter(input, idx).unwrap())
         .fold(String::new(), |acc, s| acc + &s.to_string())
