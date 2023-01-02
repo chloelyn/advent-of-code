@@ -10,7 +10,7 @@ My solutions for [Advent of Code](https://adventofcode.com/about), an Advent cal
 [22-4]: 2022/src/solutions/day04.rs
 [22-5]: 2022/src/solutions/day05.rs
 [22-6]: 2022/src/solutions/day06.rs
-[22-7]: 2022/src/solutions/day07.py
+[22-7]: 2022/src/solutions/day07/solve.py
 
 |          |          |          |          |          |          |          |
 | -------: | -------: | -------: | -------: | -------: | -------: | -------: |
