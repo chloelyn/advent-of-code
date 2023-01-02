@@ -6,5 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+tabled = { version = "0.10.0", features = [ "color" ] }
+catppuccin = { version = "1.0.4", features = [ "ansi" ] }
+ansi_term = "0.12"
 twenty-two = { path = "../2022" }
 common = { path = "../common" }

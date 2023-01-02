@@ -1,22 +1,37 @@
+use catppuccin::MOCHA;
 use common::Solution;
 use std::ops::Sub;
+use tabled::{format::Format, object::Columns, Modify, Style, Tabled};
 use twenty_two::solutions::*;
 
 const MAX_ITERATIONS: u128 = 1000;
 
-macro_rules! table {
-    {$( ($x:expr, $name:expr, time = $time:expr) ),*} => {
-        println!(
-            "{0: <3} | {1: <10} | {2: <10} | {3: <5}",
-            "day", "part one", "part two", "avg time"
-        );
-        $(
-            time($x, $name, $time);
-        )*
-    };
+#[derive(Tabled)]
+#[tabled(rename_all = "PascalCase")]
+struct SolveData {
+    day: String,
+    part_one: usize,
+    part_two: usize,
+    avg_time: String,
 }
 
-fn time(solution: impl Solution, name: &str, time: bool) {
+macro_rules! table {
+    {$( ($x:expr, $name:expr, time = $time:expr) ),*} => {{
+        let mut data: Vec<SolveData> = vec![];
+        $(
+            data.push(time($x, $name, $time));
+        )*
+        let mut table = tabled::Table::new(data);
+        table
+            .with(Style::rounded())
+            .with(Modify::new(Columns::single(0)).with(Format::new(|s| MOCHA.red.ansi_paint(s).to_string())))
+            .with(Modify::new(Columns::new(1..=2)).with(Format::new(|s| MOCHA.green.ansi_paint(s).to_string())))
+            .with(Modify::new(Columns::new(3..)).with(Format::new(|s| MOCHA.yellow.ansi_paint(s).to_string())));
+        table
+    }};
+}
+
+fn time(solution: impl Solution, day: &str, time: bool) -> SolveData {
     let mut average: Option<u128> = None;
     if time {
         let sum: u128 = (0..MAX_ITERATIONS)
@@ -35,18 +50,24 @@ fn time(solution: impl Solution, name: &str, time: bool) {
     }
 
     let (part_one, part_two) = solution.solve();
-    let average = match average {
-        Some(average) => format!("{}μs", average),
-        _ => String::from("n/a"),
-    };
-    println!(
-        "{0: <3} | {1: <10} | {2: <10} | {3: <5}",
-        name, part_one, part_two, average
-    );
+
+    SolveData {
+        day: day.into(),
+        part_one,
+        part_two,
+        avg_time: match average {
+            Some(average) => format!("{}μs", average),
+            _ => String::from("n/a"),
+        },
+    }
 }
 
 fn main() {
-    table! {
-        (day01::DayOne, "01", time = true)
-    };
+    println!(
+        "{}",
+        table! {
+            (day01::DayOne, "01", time = false),
+            (day02::DayTwo, "02", time = false)
+        }
+    )
 }
