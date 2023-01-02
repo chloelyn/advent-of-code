@@ -10,7 +10,7 @@ struct State {
     position: usize,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Edge {
     node: usize,
     cost: usize,
@@ -32,28 +32,41 @@ impl PartialOrd for State {
 }
 
 impl From<&Vec<Vec<usize>>> for Graph {
-    /// Generates an adjacency list for a graph from a 2-dimensional array.
-    fn from(weights: &Vec<Vec<usize>>) -> Self {
-        let width = weights.iter().next().unwrap().len();
-        let height = weights.len();
+    /// Creates an adjacency list for a graph representation
+    /// of a grid. For each node in the graph, the weight
+    /// of the edge between it and a neighbor is defined by
+    /// the value of the neighbor in the grid.
+    fn from(grid: &Vec<Vec<usize>>) -> Self {
+        Self::new(grid, |_, next| next)
+    }
+}
+
+impl Graph {
+    /// Creates an adjacency list for a graph representation
+    /// of a grid, using the function f to calculate the weight
+    /// of each edge.
+    pub fn new<F>(grid: &Vec<Vec<usize>>, f: F) -> Self
+    where
+        F: Fn(usize, usize) -> usize,
+    {
+        let width = grid.iter().next().unwrap().len();
+        let height = grid.len();
         let mut nodes: Vec<Vec<Edge>> = vec![];
-        for (row, values) in weights.iter().enumerate() {
-            for (col, _) in values.iter().enumerate() {
+        for (row, values) in grid.iter().enumerate() {
+            for (col, &elevation) in values.iter().enumerate() {
                 let mut edges: Vec<Edge> = vec![];
                 for edge in super::grid::neighbors((width, height), (row, col), false) {
                     edges.push(Edge {
                         node: width * edge.0 + edge.1,
-                        cost: weights[edge.0][edge.1],
-                    })
+                        cost: f(elevation, grid[edge.0][edge.1]),
+                    });
                 }
                 nodes.push(edges);
             }
         }
         Self { nodes }
     }
-}
 
-impl Graph {
     pub fn dijkstra(&self, start: usize, goal: usize) -> Option<usize> {
         let mut dist: Vec<_> = (0..self.nodes.len()).map(|_| usize::MAX).collect();
         let mut heap = BinaryHeap::new();
