@@ -14,13 +14,11 @@ pub fn solve(input: &str) -> (usize, String) {
     let mut cpu = CPU::new();
     let instructions = input.lines().map(Instruction::from_str);
     cpu.process(instructions);
-    let converted = common::ocr::convert(&cpu.readout());
     (
         cpu.signal_strength as usize,
-        if converted == "" {
-            cpu.readout()
-        } else {
-            converted
+        match common::ocr::convert(&cpu.readout()) {
+            v if v.is_empty() => cpu.readout(),
+            v => v.to_string(),
         },
     )
 }
