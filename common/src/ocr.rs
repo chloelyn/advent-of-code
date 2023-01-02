@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+const LETTER_WIDTH: usize = 5;
+
 fn characters() -> HashMap<&'static str, char> {
     HashMap::from([
         (".##.\n#..#\n#..#\n####\n#..#\n#..#", 'A'),
@@ -24,13 +26,13 @@ fn characters() -> HashMap<&'static str, char> {
 }
 
 pub fn convert_letter(input: &str, idx: usize) -> Option<char> {
-    let offset = idx * 4 + idx;
+    let offset = idx * LETTER_WIDTH;
     let c = input
         .lines()
         .map(|line| {
             line.chars()
                 .skip(offset)
-                .take(4)
+                .take(LETTER_WIDTH - 1)
                 .fold(String::new(), |acc, s| acc + &s.to_string())
         })
         .fold(String::new(), |acc, s| acc + &s + "\n");
