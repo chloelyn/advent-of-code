@@ -1,6 +1,6 @@
 pub use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-pub mod matrix;
+pub mod grid;
 pub mod python;
 
 #[macro_export]
