@@ -42,7 +42,6 @@ pub fn convert_letter(input: &str, idx: usize) -> Option<char> {
 
 pub fn convert(input: &str) -> String {
     (0..)
-        .take_while(|&idx| convert_letter(input, idx).is_some())
-        .map(|idx| convert_letter(input, idx).unwrap())
+        .map_while(|idx| convert_letter(input, idx))
         .fold(String::new(), |acc, s| acc + &s.to_string())
 }
