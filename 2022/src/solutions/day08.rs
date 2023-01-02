@@ -12,7 +12,7 @@ pub fn solve(input: &str) -> (usize, usize) {
     let grove = TreeGrove::from_str(input).unwrap();
     let inner = grove.trees.len() - 2;
     let mut count = inner * 4 + 4;
-    let mut scenic_scores: Vec<usize> = vec![];
+    let mut scenic_scores: Vec<usize> = Vec::with_capacity(grove.trees.len() * grove.trees.len());
     for (row, tree_row) in grove.trees.iter().enumerate().skip(1).take(inner) {
         for (col, _) in tree_row.iter().enumerate().skip(1).take(inner) {
             let scenic_score = DIRECTIONS
@@ -76,9 +76,9 @@ impl TreeGrove {
         }
     }
 
-    fn find_sum<K>(&self, (row, col): (usize, usize), values: K, vertical: bool) -> usize
+    fn find_sum<I>(&self, (row, col): (usize, usize), values: I, vertical: bool) -> usize
     where
-        K: IntoIterator<Item = usize>,
+        I: IntoIterator<Item = usize>,
     {
         let checking = self.trees[row][col];
         let mut sum = 0;
