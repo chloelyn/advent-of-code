@@ -2,29 +2,26 @@ use std::sync::RwLock;
 
 type Stacks = Vec<RwLock<Vec<char>>>;
 
-pub fn input() -> (&'static str, bool) {
-    (include_str!("../../input/day05.txt"), false)
+pub fn input() -> (&'static str, (usize, usize)) {
+    (include_str!("../../input/day05.txt"), (10, 8))
 }
 
-pub fn test_input() -> (&'static str, bool) {
-    (include_str!("../../input/tests/day05.txt"), true)
+pub fn test_input() -> (&'static str, (usize, usize)) {
+    (include_str!("../../input/tests/day05.txt"), (5, 3))
 }
 
-pub fn solve((input, test): (&str, bool)) -> (String, String) {
+pub fn solve((input, offsets): (&str, (usize, usize))) -> (String, String) {
     (
-        move_crates(input, test, true),
-        move_crates(input, test, false),
+        move_crates(input, offsets, true),
+        move_crates(input, offsets, false),
     )
 }
 
-fn move_crates(input: &str, test: bool, part_one: bool) -> String {
-    let stacks = if test {
-        get_test_stacks()
-    } else {
-        get_stacks()
-    };
+fn move_crates(input: &str, offsets: (usize, usize), part_one: bool) -> String {
+    let stacks = parse_stacks(input, offsets.1);
     input
         .lines()
+        .skip(offsets.0)
         .map(|step| {
             let s: Vec<&str> = step.split(' ').collect();
             let parse = |s: &str| s.parse::<usize>().unwrap();
@@ -33,14 +30,14 @@ fn move_crates(input: &str, test: bool, part_one: bool) -> String {
         .for_each(|(count, from, to)| {
             let from = &mut stacks[from - 1].write().unwrap();
             let to = &mut stacks[to - 1].write().unwrap();
-            let f_len = from.len();
-            let moving = &from[f_len - count..];
+            let len = from.len();
+            let moving = &from[len - count..];
             if part_one {
                 to.extend(moving.iter().rev());
             } else {
                 to.extend(moving.iter());
             }
-            from.truncate(f_len - count);
+            from.truncate(len - count);
         });
     stacks
         .iter()
@@ -50,26 +47,30 @@ fn move_crates(input: &str, test: bool, part_one: bool) -> String {
         .unwrap()
 }
 
-fn get_stacks() -> Stacks {
-    vec![
-        RwLock::new(vec!['B', 'P', 'N', 'Q', 'H', 'D', 'R', 'T']), // 1
-        RwLock::new(vec!['W', 'G', 'B', 'J', 'T', 'V']),           // 2
-        RwLock::new(vec!['N', 'R', 'H', 'D', 'S', 'V', 'M', 'Q']), // 3
-        RwLock::new(vec!['P', 'Z', 'N', 'M', 'C']),                // 4
-        RwLock::new(vec!['D', 'Z', 'B']),                          // 5
-        RwLock::new(vec!['V', 'C', 'W', 'Z']),                     // 6
-        RwLock::new(vec!['G', 'Z', 'N', 'C', 'V', 'Q', 'L', 'S']), // 7
-        RwLock::new(vec!['L', 'G', 'J', 'M', 'D', 'N', 'V']),      // 8
-        RwLock::new(vec!['T', 'P', 'M', 'F', 'Z', 'C', 'G']),      // 9
-    ]
-}
+fn parse_stacks(input: &str, offset: usize) -> Stacks {
+    let mut stacks: Stacks = Vec::new();
+    let mut cur = 0;
+    input
+        .lines()
+        .take(offset)
+        .enumerate()
+        .for_each(|(idx, line)| {
+            line.chars().skip(1).step_by(4).for_each(|c| {
+                if idx == 0 {
+                    stacks.push(RwLock::new(vec![]));
+                }
+                if c != ' ' {
+                    stacks[cur].write().unwrap().push(c);
+                }
+                cur += 1;
+            });
+            cur = 0;
+        });
+    stacks
+        .iter()
+        .for_each(|stack| stack.write().unwrap().reverse());
 
-fn get_test_stacks() -> Stacks {
-    vec![
-        RwLock::new(vec!['Z', 'N']),      // 1
-        RwLock::new(vec!['M', 'C', 'D']), // 2
-        RwLock::new(vec!['P']),           // 3
-    ]
+    stacks
 }
 
 common::test!(
