@@ -66,8 +66,8 @@ fn main() {
     println!(
         "{}",
         table! {
-            (day01::DayOne, "01", time = false),
-            (day02::DayTwo, "02", time = false)
+            (day01::DayOne, "01", time = true),
+            (day02::DayTwo, "02", time = true)
         }
     )
 }
