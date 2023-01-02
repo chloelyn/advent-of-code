@@ -13,18 +13,10 @@ pub fn solve(input: &str) -> (usize, usize) {
     let inner = grove.trees.len() - 2;
     let mut count = inner * 4 + 4;
     let mut scenic_scores: Vec<usize> = Vec::with_capacity(grove.trees.len() * grove.trees.len());
-    for (row, tree_row) in grove.trees.iter().enumerate().skip(1).take(inner) {
-        for (col, _) in tree_row.iter().enumerate().skip(1).take(inner) {
-            let scenic_score = DIRECTIONS
-                .iter()
-                .map(|direction| grove.view_distance((row, col), direction))
-                .reduce(|acc, dist| acc * dist)
-                .unwrap();
-            scenic_scores.push(scenic_score);
-            if DIRECTIONS
-                .iter()
-                .any(|direction| grove.visible((row, col), direction))
-            {
+    for row in 1..grove.trees.len() - 1 {
+        for col in 1..grove.trees.len() - 1 {
+            scenic_scores.push(grove.scenic_score((row, col)));
+            if grove.visible_from_edge((row, col)) {
                 count += 1;
             }
         }
@@ -65,6 +57,20 @@ impl TreeGrove {
                 (row + 1..=self.trees.len() - 1).all(|row| self.trees[row][col] < checking)
             }
         }
+    }
+
+    fn visible_from_edge(&self, (row, col): (usize, usize)) -> bool {
+        DIRECTIONS
+            .iter()
+            .any(|direction| self.visible((row, col), direction))
+    }
+
+    fn scenic_score(&self, (row, col): (usize, usize)) -> usize {
+        DIRECTIONS
+            .iter()
+            .map(|direction| self.view_distance((row, col), direction))
+            .reduce(|acc, dist| acc * dist)
+            .unwrap()
     }
 
     fn view_distance(&self, (row, col): (usize, usize), direction: &Direction) -> usize {
