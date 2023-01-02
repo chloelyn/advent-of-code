@@ -57,16 +57,14 @@ impl<'a> CPU<'a> {
     {
         for instruction in instructions {
             match instruction {
-                Instruction::Addx(n) => {
-                    (0..2).for_each(|c| {
-                        self.update_strength();
-                        self.draw_pixel();
-                        if c == 1 {
-                            self.register += n;
-                        }
-                        self.cycle += 1;
-                    });
-                }
+                Instruction::Addx(n) => (0..2).for_each(|c| {
+                    self.update_strength();
+                    self.draw_pixel();
+                    if c == 1 {
+                        self.register += n;
+                    }
+                    self.cycle += 1;
+                }),
                 Instruction::Noop => {
                     self.update_strength();
                     self.draw_pixel();
