@@ -1,8 +1,5 @@
 use catppuccin::MOCHA;
-use std::ops::Sub;
 use tabled::{format::Format, object::Columns, Modify, Style, Tabled};
-
-const MAX_ITERATIONS: u128 = 1000;
 
 #[derive(Tabled)]
 #[tabled(rename_all = "PascalCase")]
@@ -10,7 +7,6 @@ struct SolveData {
     day: String,
     part_one: String,
     part_two: String,
-    avg_time: String,
 }
 
 macro_rules! table {
@@ -21,7 +17,7 @@ macro_rules! table {
         $(
             let s = stringify!($module);
             let day = s.rsplit_once("day").unwrap().1;
-            data.push(time!($module, day));
+            data.push(solve!($module, day));
         )*
         let mut table = tabled::Table::new(data);
         table
@@ -33,29 +29,14 @@ macro_rules! table {
     }};
 }
 
-macro_rules! time {
+macro_rules! solve {
     ($module:ident, $name:expr) => {{
-        let sum: u128 = (0..MAX_ITERATIONS)
-            .into_iter()
-            .map(|_| {
-                let start = std::time::Instant::now();
-                $module::solve($module::input());
-                let end = std::time::Instant::now();
-                let elapsed = end.sub(start);
-
-                elapsed.as_micros()
-            })
-            .sum();
-
-        let average = sum / MAX_ITERATIONS;
-
         let (part_one, part_two) = $module::solve($module::input());
 
         SolveData {
             day: $name.into(),
             part_one: part_one.to_string(),
             part_two: part_two.to_string(),
-            avg_time: format!("{}μs", average),
         }
     }};
 }

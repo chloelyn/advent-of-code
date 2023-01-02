@@ -23,7 +23,7 @@ fn find_index(chars: &Vec<char>, size: usize) -> usize {
         .windows(size)
         .enumerate()
         .find_map(|(idx, window)| {
-            let mut s: HashSet<char> = HashSet::new();
+            let mut s: HashSet<char> = HashSet::with_capacity(size);
             s.extend(window.iter());
             if s.len() == size {
                 Some(idx + size)
