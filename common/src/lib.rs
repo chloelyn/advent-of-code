@@ -1,4 +1,7 @@
+pub use criterion::{black_box, criterion_group, criterion_main, Criterion};
+
 pub mod matrix;
+pub mod python;
 
 #[macro_export]
 macro_rules! test {
@@ -23,18 +26,17 @@ macro_rules! test {
 #[macro_export]
 macro_rules! benchmark {
     ($year:ident, {$($module:ident),*}) => {
-        use criterion::{black_box, criterion_group, criterion_main, Criterion};
         use $year::solutions::*;
 
-        fn criterion_benchmark(c: &mut Criterion) {
+        fn criterion_benchmark(c: &mut $crate::Criterion) {
             $(
                 c.bench_function(stringify!($module), |b| {
-                    b.iter(|| $module::solve(black_box($module::input())))
+                    b.iter(|| $module::solve($crate::black_box($module::input())))
                 });
             )*
         }
 
-        criterion_group!(benches, criterion_benchmark);
-        criterion_main!(benches);
+        $crate::criterion_group!(benches, criterion_benchmark);
+        $crate::criterion_main!(benches);
     };
 }
