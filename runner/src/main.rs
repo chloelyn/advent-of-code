@@ -68,7 +68,8 @@ fn main() {
         table! {
             (day01::Day01, "01", time = true),
             (day02::Day02, "02", time = true),
-            (day03::Day03, "03", time = true)
+            (day03::Day03, "03", time = true),
+            (day04::Day04, "04", time = true)
         }
     )
 }
