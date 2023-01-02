@@ -12,19 +12,13 @@ pub fn test_input() -> &'static str {
 
 pub fn solve(input: &str) -> (usize, usize) {
     let mut short_rope = Rope::new(1);
-    for line in input.lines() {
-        let (direction, count) = line.split_once(' ').unwrap();
-        let count = count.parse::<usize>().unwrap();
-        short_rope.step(direction, count);
-    }
-
     let mut rope = Rope::new(9);
     for line in input.lines() {
         let (direction, count) = line.split_once(' ').unwrap();
         let count = count.parse::<usize>().unwrap();
+        short_rope.step(direction, count);
         rope.step(direction, count);
     }
-
     (short_rope.visited.len(), rope.visited.len())
 }
 
