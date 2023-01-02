@@ -1,7 +1,6 @@
-import os
-
-TOTAL_FS_SIZE = 70000000
-NECESSARY_UNUSED = 30000000
+SMALL_DIRECTORY_MAX = 100_000
+TOTAL_FS_SIZE = 7_000_0000
+NECESSARY_UNUSED = 3_000_0000
 
 
 def find(fs, name):
@@ -12,51 +11,50 @@ def find(fs, name):
 
 
 def calculate_folder_sizes(folder):
-    folder_sizes = []
+    sizes = []
     total = 0
     for entry in folder["entries"]:
         if "size" in entry:
             total += entry["size"]
         else:
-            size, fsizes = calculate_folder_sizes(entry)
+            size, nested_sizes = calculate_folder_sizes(entry)
             total += size
-            folder_sizes += fsizes
-    folder_sizes.append(total)
-    return total, folder_sizes
+            sizes += nested_sizes
+    sizes.append(total)
+    return total, sizes
+
+
+def build_filesystem(input: str):
+    cur = {"name": "/", "entries": [], "parent": {}}
+    root = cur
+    elems = input.split("$")[2:]
+    for el in elems:
+        data = [s.strip() for s in el.strip().split("\n")]
+        if data[0].startswith("cd"):
+            dir = data[0].split(" ")[1]
+            cur = cur["parent"] if dir == ".." else find(cur, dir)
+        else:
+            for entry in data[1:]:
+                first, name = entry.split(" ")
+                cur["entries"].append(
+                    {"name": name, "entries": [], "parent": cur}
+                    if first == "dir"
+                    else {"name": name, "size": int(first)}
+                )
+    return root
 
 
 def solve(input: str):
-    fs = {"name": "/", "entries": [], "parent": {}}
-    FS = fs
-    cmds = input.split("$")[2:]
-    for cmd in cmds:
-        cmd = cmd.strip()
-        data = [x.strip() for x in cmd.split("\n")]
-        cmd = data[0]
-
-        if cmd.startswith("cd"):
-            dir = cmd.split(" ")[1]
-            if dir == "..":
-                fs = fs["parent"]
-            else:
-                fs = find(fs, dir)
-        else:
-            for entry in data[1:]:
-                first, second = entry.split(" ")
-                if first == "dir":
-                    fs["entries"].append({"name": second, "entries": [], "parent": fs})
-                else:
-                    fs["entries"].append({"name": second, "size": int(first)})
-    used, sizes = calculate_folder_sizes(FS)
+    root = build_filesystem(input)
+    used, sizes = calculate_folder_sizes(root)
     total, removing = 0, 0
     unused = TOTAL_FS_SIZE - used
     removable = NECESSARY_UNUSED - unused
     for size in sizes:
-        if size <= 100000:
+        if size <= SMALL_DIRECTORY_MAX:
             total += size
     for size in sorted(sizes):
         if size >= removable:
             removing = size
             break
-
     return total, removing
