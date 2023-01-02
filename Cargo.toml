@@ -3,5 +3,6 @@
 members = [
 	"common",
 	"runner",
+	"2021",
 	"2022"
 ]
