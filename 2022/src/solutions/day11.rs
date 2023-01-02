@@ -1,6 +1,5 @@
 use std::{
     cell::RefCell,
-    collections::VecDeque,
     error::Error,
     iter::Skip,
     str::{FromStr, Lines},
@@ -38,7 +37,7 @@ impl MonkeyGroup {
         for monkey in self.monkeys.iter() {
             for inspected in monkey.borrow().inspections(relieving, modulus) {
                 let mut next = self.monkeys[inspected.1].borrow_mut();
-                next.items.push_back(inspected.0);
+                next.items.push(inspected.0);
             }
             let mut monkey = monkey.borrow_mut();
             monkey.inspected += monkey.items.len();
@@ -66,7 +65,7 @@ impl MonkeyGroup {
 }
 
 struct Monkey {
-    items: VecDeque<usize>,
+    items: Vec<usize>,
     operation: Operation,
     divisor: usize,
     inspected: usize,
@@ -141,11 +140,11 @@ impl MonkeyParser {
         Self {}
     }
 
-    fn items(&self, lines: &mut Skip<Lines>) -> VecDeque<usize> {
+    fn items(&self, lines: &mut Skip<Lines>) -> Vec<usize> {
         self.strip(lines, "  Starting items: ")
             .split(',')
             .map(|item| self.parse(item))
-            .collect::<VecDeque<_>>()
+            .collect::<Vec<_>>()
     }
 
     fn operation(&self, lines: &mut Skip<Lines>) -> Operation {
