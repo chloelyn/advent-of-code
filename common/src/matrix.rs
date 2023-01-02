@@ -76,21 +76,3 @@ impl<T> Matrix<T> {
         row < height && col < width
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::Matrix;
-
-    #[test]
-    fn test_not_exists() {
-        let m: Matrix<u8> = Matrix::new(15, 15);
-        assert!(!m.exists((17, 14)));
-    }
-
-    #[test]
-    fn test_exists() {
-        let m: Matrix<u8> = Matrix::new(15, 15);
-        let neighbors = m.neighbors((17, 17), true);
-        println!("{:?}", neighbors);
-    }
-}

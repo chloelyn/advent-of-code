@@ -1,6 +1,32 @@
-use common::Solution;
+pub fn input() -> &'static str {
+    include_str!("../../input/day02.txt")
+}
 
-pub struct Day02;
+pub fn test_input() -> &'static str {
+    include_str!("../../input/tests/day02.txt")
+}
+
+pub fn solve(input: &str) -> (usize, usize) {
+    let (part_one, part_two): _ = input
+        .split("\n")
+        .into_iter()
+        .map(|row| {
+            row.split(' ')
+                .into_iter()
+                .map(|item| match item.trim() {
+                    "A" | "X" => Shape::Rock,
+                    "B" | "Y" => Shape::Paper,
+                    "C" | "Z" => Shape::Scissors,
+                    _ => panic!("invalid input"),
+                })
+                .collect::<Vec<_>>()
+        })
+        .map(|row| (part_one(&row), part_two(&row)))
+        .reduce(|acc, (part_one, part_two)| (acc.0 + part_one, acc.1 + part_two))
+        .unwrap();
+
+    (part_one as usize, part_two as usize)
+}
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[repr(u64)]
@@ -8,34 +34,6 @@ enum Shape {
     Rock = 1,
     Paper = 2,
     Scissors = 3,
-}
-
-impl Solution for Day02 {
-    fn input<'a>() -> &'a str {
-        include_str!("../../input/day02.txt")
-    }
-
-    fn solve(&self) -> (usize, usize) {
-        let (part_one, part_two): _ = Self::input()
-            .split("\n")
-            .into_iter()
-            .map(|row| {
-                row.split(' ')
-                    .into_iter()
-                    .map(|item| match item.trim() {
-                        "A" | "X" => Shape::Rock,
-                        "B" | "Y" => Shape::Paper,
-                        "C" | "Z" => Shape::Scissors,
-                        _ => panic!("invalid input"),
-                    })
-                    .collect::<Vec<_>>()
-            })
-            .map(|row| (part_one(&row), part_two(&row)))
-            .reduce(|acc, (part_one, part_two)| (acc.0 + part_one, acc.1 + part_two))
-            .unwrap();
-
-        (part_one as usize, part_two as usize)
-    }
 }
 
 fn part_one(row: &Vec<Shape>) -> u64 {
@@ -67,3 +65,5 @@ fn part_two(row: &Vec<Shape>) -> u64 {
         Shape::Rock => choices[(*opponent as usize + 1) % 3],   // loss
     }
 }
+
+common::test!(day02, (15, 12), (13565, 12424));

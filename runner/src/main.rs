@@ -1,8 +1,6 @@
 use catppuccin::MOCHA;
-use common::Solution;
 use std::ops::Sub;
 use tabled::{format::Format, object::Columns, Modify, Style, Tabled};
-use twenty_two::solutions::*;
 
 const MAX_ITERATIONS: u128 = 1000;
 
@@ -16,10 +14,14 @@ struct SolveData {
 }
 
 macro_rules! table {
-    {$( ($x:expr, $name:expr, time = $time:expr) ),*} => {{
+    ($year:ident, {$($module:ident),*}) => {{
+        use $year::solutions::*;
+
         let mut data: Vec<SolveData> = vec![];
         $(
-            data.push(time($x, $name, $time));
+            let s = stringify!($module);
+            let day = s.rsplit_once("day").unwrap().1;
+            data.push(time!($module, day));
         )*
         let mut table = tabled::Table::new(data);
         table
@@ -31,14 +33,13 @@ macro_rules! table {
     }};
 }
 
-fn time(solution: impl Solution, day: &str, time: bool) -> SolveData {
-    let mut average: Option<u128> = None;
-    if time {
+macro_rules! time {
+    ($module:ident, $name:expr) => {{
         let sum: u128 = (0..MAX_ITERATIONS)
             .into_iter()
             .map(|_| {
                 let start = std::time::Instant::now();
-                solution.solve();
+                $module::solve($module::input());
                 let end = std::time::Instant::now();
                 let elapsed = end.sub(start);
 
@@ -46,30 +47,27 @@ fn time(solution: impl Solution, day: &str, time: bool) -> SolveData {
             })
             .sum();
 
-        average = Some(sum / MAX_ITERATIONS);
-    }
+        let average = sum / MAX_ITERATIONS;
 
-    let (part_one, part_two) = solution.solve();
+        let (part_one, part_two) = $module::solve($module::input());
 
-    SolveData {
-        day: day.into(),
-        part_one,
-        part_two,
-        avg_time: match average {
-            Some(average) => format!("{}μs", average),
-            _ => String::from("n/a"),
-        },
-    }
+        SolveData {
+            day: $name.into(),
+            part_one,
+            part_two,
+            avg_time: format!("{}μs", average),
+        }
+    }};
 }
 
 fn main() {
     println!(
         "{}",
-        table! {
-            (day01::Day01, "01", time = true),
-            (day02::Day02, "02", time = true),
-            (day03::Day03, "03", time = true),
-            (day04::Day04, "04", time = true)
-        }
+        table!(twenty_two, {
+            day01,
+            day02,
+            day03,
+            day04
+        })
     )
 }
