@@ -8,8 +8,8 @@ const MAX_ITERATIONS: u128 = 1000;
 #[tabled(rename_all = "PascalCase")]
 struct SolveData {
     day: String,
-    part_one: usize,
-    part_two: usize,
+    part_one: String,
+    part_two: String,
     avg_time: String,
 }
 
@@ -53,8 +53,8 @@ macro_rules! time {
 
         SolveData {
             day: $name.into(),
-            part_one,
-            part_two,
+            part_one: part_one.to_string(),
+            part_two: part_two.to_string(),
             avg_time: format!("{}μs", average),
         }
     }};
@@ -67,7 +67,8 @@ fn main() {
             day01,
             day02,
             day03,
-            day04
+            day04,
+            day05
         })
     )
 }
