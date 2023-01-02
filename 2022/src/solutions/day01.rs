@@ -1,14 +1,14 @@
 use common::Solution;
 
-pub struct DayOne;
+pub struct Day01;
 
-impl Solution for DayOne {
+impl Solution for Day01 {
     fn input<'a>() -> &'a str {
         include_str!("../../input/day01.txt")
     }
 
     fn solve(&self) -> (usize, usize) {
-        let input: Vec<_> = DayOne::input().split("\n\n").collect::<Vec<_>>();
+        let input: Vec<_> = Day01::input().split("\n\n").collect::<Vec<_>>();
         let mut calorie_counts: Vec<usize> = vec![];
         for elf in &input {
             let mut total_calories: usize = 0;

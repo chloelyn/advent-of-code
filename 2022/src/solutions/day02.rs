@@ -1,6 +1,6 @@
 use common::Solution;
 
-pub struct DayTwo;
+pub struct Day02;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[repr(u64)]
@@ -10,7 +10,7 @@ enum Shape {
     Scissors = 3,
 }
 
-impl Solution for DayTwo {
+impl Solution for Day02 {
     fn input<'a>() -> &'a str {
         include_str!("../../input/day02.txt")
     }

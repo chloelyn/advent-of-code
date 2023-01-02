@@ -1,8 +1,8 @@
 use common::Solution;
 
-pub struct DayThree;
+pub struct Day03;
 
-impl Solution for DayThree {
+impl Solution for Day03 {
     fn input<'a>() -> &'a str {
         include_str!("../../input/day03.txt")
     }
