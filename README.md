@@ -1,6 +1,6 @@
 # Advent of Code
 
-My solutions for [Advent of Code](https://adventofcode.com/about), an advent calendar of small programming puzzles
+My solutions for [Advent of Code](https://adventofcode.com/about), an Advent calendar of small programming puzzles!
 
 ## ✨ 2022 ✨
 
