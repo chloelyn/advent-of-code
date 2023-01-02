@@ -8,6 +8,5 @@ edition = "2021"
 [dependencies]
 tabled = { version = "0.10.0", features = [ "color" ] }
 catppuccin = { version = "1.0.4", features = [ "ansi" ] }
-ansi_term = "0.12"
 twenty-two = { path = "../2022" }
 common = { path = "../common" }
