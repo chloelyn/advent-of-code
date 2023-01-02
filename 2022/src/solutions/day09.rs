@@ -43,32 +43,27 @@ impl Rope {
         }
     }
 
+    fn offset(&mut self, front: (isize, isize), idx: usize) -> (isize, isize) {
+        let behind = self.rest[idx];
+        match (front, behind) {
+            _ if front.0 == behind.0 && front.1 > behind.1 => (0, 1),
+            _ if front.0 == behind.0 && front.1 < behind.1 => (0, -1),
+            _ if front.1 == behind.1 && front.0 < behind.0 => (-1, 0),
+            _ if front.1 == behind.1 && front.0 > behind.0 => (1, 0),
+            _ if front.0 < behind.0 && front.1 < behind.1 => (-1, -1),
+            _ if front.0 < behind.0 && front.1 > behind.1 => (-1, 1),
+            _ if front.0 > behind.0 && front.1 < behind.1 => (1, -1),
+            _ if front.0 > behind.0 && front.1 > behind.1 => (1, 1),
+            (_, _) => unreachable!(),
+        }
+    }
+
     fn step_next(&mut self, front: (isize, isize), idx: usize) {
         let mut behind = self.rest[idx];
         if self.should_step(front, behind) {
-            match (front, behind) {
-                _ if front.0 == behind.0 && front.1 > behind.1 => behind.1 += 1,
-                _ if front.0 == behind.0 && front.1 < behind.1 => behind.1 -= 1,
-                _ if front.1 == behind.1 && front.0 < behind.0 => behind.0 -= 1,
-                _ if front.1 == behind.1 && front.0 > behind.0 => behind.0 += 1,
-                _ if front.0 < behind.0 && front.1 < behind.1 => {
-                    behind.0 -= 1;
-                    behind.1 -= 1;
-                }
-                _ if front.0 < behind.0 && front.1 > behind.1 => {
-                    behind.0 -= 1;
-                    behind.1 += 1;
-                }
-                _ if front.0 > behind.0 && front.1 < behind.1 => {
-                    behind.0 += 1;
-                    behind.1 -= 1;
-                }
-                _ if front.0 > behind.0 && front.1 > behind.1 => {
-                    behind.0 += 1;
-                    behind.1 += 1;
-                }
-                (_, _) => unreachable!(),
-            }
+            let offset = self.offset(front, idx);
+            behind.0 += offset.0;
+            behind.1 += offset.1;
         }
         self.rest[idx] = behind;
     }
