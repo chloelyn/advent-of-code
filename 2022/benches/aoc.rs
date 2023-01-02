@@ -6,5 +6,6 @@ common::benchmark!(twenty_two, {
     day05,
     day06,
     day07,
-    day08
+    day08,
+    day09
 });
