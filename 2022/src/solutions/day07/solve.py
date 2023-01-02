@@ -25,10 +25,10 @@ def calculate_folder_sizes(folder):
     return total, folder_sizes
 
 
-with open(f"{os.getcwd()}/2022/input/day07.txt") as f:
+def solve(input: str):
     fs = {"name": "/", "entries": [], "parent": {}}
     FS = fs
-    cmds = f.read().split("$")[2:]
+    cmds = input.split("$")[2:]
     for cmd in cmds:
         cmd = cmd.strip()
         data = [x.strip() for x in cmd.split("\n")]
@@ -48,14 +48,15 @@ with open(f"{os.getcwd()}/2022/input/day07.txt") as f:
                 else:
                     fs["entries"].append({"name": second, "size": int(first)})
     used, sizes = calculate_folder_sizes(FS)
-    total = 0
+    total, removing = 0, 0
     unused = TOTAL_FS_SIZE - used
     removable = NECESSARY_UNUSED - unused
     for size in sizes:
         if size <= 100000:
             total += size
-    print(f"Part One: {total}")
     for size in sorted(sizes):
         if size >= removable:
-            print(f"Part Two: {size}")
+            removing = size
             break
+
+    return total, removing

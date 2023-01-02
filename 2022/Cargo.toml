@@ -8,6 +8,10 @@ edition = "2021"
 [dependencies]
 common = { path = "../common" }
 
+[dependencies.pyo3]
+version = "0.17.3"
+features = ["auto-initialize"]
+
 [dev-dependencies]
 criterion = "0.4.0"
 
