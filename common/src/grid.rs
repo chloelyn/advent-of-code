@@ -8,13 +8,6 @@ pub fn neighbors(
         checks.extend([(1, 1), (1, -1), (-1, 1), (-1, -1)].iter())
     }
 
-    if !exists((width, height), (row, col)) {
-        panic!(
-            "Invalid (row, col) pair: ({row}, {col}) for size: ({}, {})",
-            width, height
-        );
-    }
-
     checks.into_iter().filter_map(move |(radjust, cadjust)| {
         let r = (row as isize + radjust).try_into();
         let c = (col as isize + cadjust).try_into();
@@ -24,6 +17,10 @@ pub fn neighbors(
             (_, _) => None,
         }
     })
+}
+
+pub fn manhattan_distance((x1, y1): (isize, isize), (x2, y2): (isize, isize)) -> isize {
+    (x1 - x2).abs() + (y1 - y2).abs()
 }
 
 pub fn exists((width, height): (usize, usize), (row, col): (usize, usize)) -> bool {
