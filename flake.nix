@@ -20,7 +20,7 @@
       stdenv.mkDerivation {
         name = "advent-of-code";
         src = self;
-        buildInputs = [ rust-nightly ];
+        buildInputs = [ rust-nightly python310 ];
       };
   };
 }
