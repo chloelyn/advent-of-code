@@ -2,8 +2,6 @@
 
 My solutions for [Advent of Code](https://adventofcode.com/about), an Advent calendar of small programming puzzles!
 
-This branch contains my original, unrevised solutions. Improved solutions can be found in the [revised](https://github.com/chloelyn/advent-of-code/tree/revised) branch.
-
 ## ✨ 2022 ✨
 
 [22-1]: 2022/src/solutions/day01.rs
