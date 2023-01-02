@@ -1,4 +1,3 @@
-#![feature(once_cell)]
 pub use criterion::{black_box, criterion_group, criterion_main, Criterion};
 pub use regex;
 
