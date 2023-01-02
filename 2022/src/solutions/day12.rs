@@ -1,4 +1,4 @@
-use common::graph::Graph;
+use common::graph::{constants, Graph};
 
 pub fn input() -> &'static str {
     include_str!("../../input/day12.txt")
@@ -12,7 +12,7 @@ pub fn solve(input: &str) -> (usize, usize) {
     let (starts, end) = endpoints(input);
     let g = Graph::new(&heights(input), |cur, next| {
         if next as isize - cur as isize > 1 {
-            100000 // we never want to follow this path
+            constants::SKIP // we never want to follow this path
         } else {
             1
         }
@@ -21,7 +21,7 @@ pub fn solve(input: &str) -> (usize, usize) {
         g.dijkstra(0, end).unwrap(),
         starts
             .iter()
-            .map(|&start| g.dijkstra(start, end).unwrap())
+            .map(|&start| g.dijkstra(start, end).unwrap_or(usize::MAX))
             .min()
             .unwrap(),
     )

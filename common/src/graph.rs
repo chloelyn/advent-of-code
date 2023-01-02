@@ -1,5 +1,9 @@
 use std::collections::BinaryHeap;
 
+pub mod constants {
+    pub const SKIP: usize = usize::MAX;
+}
+
 pub struct Graph {
     pub nodes: Vec<Vec<Edge>>,
 }
@@ -53,12 +57,12 @@ impl Graph {
         let height = grid.len();
         let mut nodes: Vec<Vec<Edge>> = vec![];
         for (row, values) in grid.iter().enumerate() {
-            for (col, &elevation) in values.iter().enumerate() {
+            for (col, &value) in values.iter().enumerate() {
                 let mut edges: Vec<Edge> = vec![];
                 for edge in super::grid::neighbors((width, height), (row, col), false) {
                     edges.push(Edge {
                         node: width * edge.0 + edge.1,
-                        cost: f(elevation, grid[edge.0][edge.1]),
+                        cost: f(value, grid[edge.0][edge.1]),
                     });
                 }
                 nodes.push(edges);
@@ -87,6 +91,10 @@ impl Graph {
             }
 
             for edge in &self.nodes[position] {
+                if edge.cost == constants::SKIP {
+                    continue;
+                }
+
                 let next = State {
                     cost: cost + edge.cost,
                     position: edge.node,
